@@ -1,4 +1,8 @@
 # hanttihommia
+
+- Välipalaustus 2 jäi hyvin vaiheeseen kun jäin jumiin kirjautumis- ja rekisteröitymissivuihin, tällä hetkellä voi luoda tunnuksen, kirjautua ja kirjautua ulos sekä lisätä uuden ilmoituksen, mutta ilmoitukset eivät vielä tallennu minnekkään. :( 
+
+
 - Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
 - Käyttäjä pystyy lisäämään sovellukseen ilmoituksia. Lisäksi käyttäjä pystyy muokkaamaan ja poistamaan lisäämiään ilmoituksia.
 - Käyttäjä näkee sovellukseen lisätyt ilmoitukset. Käyttäjä näkee sekä itse lisäämänsä että muiden käyttäjien lisäämät ilmoitukset.
