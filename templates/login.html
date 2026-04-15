@@ -6,11 +6,15 @@
 </head>
 
 <body>
+  <h1>Kirjautuminen</h1>
+
   {% if session.username %}
   <p>
     Olet kirjautunut nimellä {{ session.username }}
   </p>
+
   <p>
+    <a href="/">Etusivulle</a>
     <a href="/logout">Kirjaudu ulos</a>
   </p>
   {% else %}
@@ -19,12 +23,18 @@
       Tunnus: <br />
       <input type="text" name="username" />
     </p>
+
     <p>
       Salasana: <br />
       <input type="password" name="password" />
     </p>
+
     <input type="submit" value="Kirjaudu" />
   </form>
+
+  <p>
+    <a href="/">Etusivulle</a>
+  </p>
   {% endif %}
 </body>
 

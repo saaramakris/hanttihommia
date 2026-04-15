@@ -1,7 +1,26 @@
 # hanttihommia
 
-- Välipalaustus 2 jäi hyvin vaiheeseen kun jäin jumiin kirjautumis- ja rekisteröitymissivuihin, tällä hetkellä voi luoda tunnuksen, kirjautua ja kirjautua ulos sekä lisätä uuden ilmoituksen, mutta ilmoitukset eivät vielä tallennu minnekkään. :( 
+Käynnistysohje: 
+1. lataa repositorio 
+git clone https://github.com/saaramakris/hanttihommia.git
+cd hanttihommia
+2. luo virtuaaliympäristö
+python3 -m venv venv
+source venv/bin/activate
+3. luo tietokanta 
+sqlite3 database.db < schema.sql
+4. käynnistä sovellus 
+flask run 
 
+Sovelluksessa on tällä hetkellä seuraavat toiminnot: 
+Luo uusi käyttäjätunnus
+Kirjaudu sisään
+Lisää uusi ilmoitus
+Tarkista, että ilmoitus näkyy etusivulla
+Hae ilmoitusta hakusanalla
+Avaa ilmoitus
+Muokkaa ilmoitusta
+Poista ilmoitus
 
 - Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
 - Käyttäjä pystyy lisäämään sovellukseen ilmoituksia. Lisäksi käyttäjä pystyy muokkaamaan ja poistamaan lisäämiään ilmoituksia.

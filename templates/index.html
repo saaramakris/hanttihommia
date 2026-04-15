@@ -2,27 +2,76 @@
 <html>
 
 <head>
-  <title>Löydät täältä hanttihommia!</title>
+  <title>Hanttihommia</title>
 </head>
 
 <body>
-    <h1>Hanttihommia</h1>
+  <h1>Hanttihommia</h1>
+
   {% if session.username %}
   <p>
     Olet kirjautunut nimellä {{ session.username }}
   </p>
+
+  <p>
+    <a href="/new_item">Uusi ilmoitus</a>
+    <a href="/logout">Kirjaudu ulos</a>
+  </p>
+  {% else %}
+  <p>
+    <a href="/login">Kirjaudu sisään</a>
+    <a href="/register">Luo tunnus</a>
+  </p>
   {% endif %}
 
-  <p> 
-    <a href="/login"> Kirjaudu sisään</a>
-    <a href="/register" >Luo tunnus</a>
-    <a href="/logout" >Kirjaudu ulos</a>
+  <h2>Hae ilmoituksia</h2>
+
+  <form action="/" method="get">
+    <p>
+      Hakusana: <br />
+      <input type="text" name="q" value="{{ query }}" />
+    </p>
+    <input type="submit" value="Hae" />
+  </form>
+
+  {% if query %}
+  <p>
+    Hakutulokset hakusanalla "{{ query }}"
   </p>
+  {% endif %}
 
-</p>
-    <a href="/new_item">Uusi ilmoitus</a>
-</p>
+  <h2>Ilmoitukset</h2>
 
+  {% if items %}
+    {% for item in items %}
+    <hr />
+
+    <h3><a href="/item/{{ item.id }}">{{ item.title }}</a></h3>
+
+    <p>
+      Ilmoittaja: {{ item.username }} <br />
+      Sijainti: {{ item.location if item.location else "-" }} <br />
+      Palkkio: {{ item.reward }} € <br />
+      Lisätty: {{ item.created_at }}
+    </p>
+
+    <p>
+      {{ item.description }}
+    </p>
+
+    {% if session.user_id and session.user_id == item.user_id %}
+    <p>
+      <a href="/edit_item/{{ item.id }}">Muokkaa</a>
+    </p>
+
+    <form action="/delete_item/{{ item.id }}" method="post">
+      <input type="submit" value="Poista ilmoitus" />
+    </form>
+    {% endif %}
+    {% endfor %}
+  {% else %}
+    <p>Ilmoituksia ei löytynyt.</p>
+  {% endif %}
 </body>
 
 </html>

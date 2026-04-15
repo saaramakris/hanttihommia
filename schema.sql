@@ -1,6 +1,18 @@
+DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY,
-    username TEXT UNIQUE,
-    password_hash TEXT
+ id INTEGER PRIMARY KEY,
+ username TEXT UNIQUE NOT NULL,
+ password_hash TEXT NOT NULL
 );
 
+CREATE TABLE items (
+ id INTEGER PRIMARY KEY,
+ title TEXT NOT NULL,
+ description TEXT NOT NULL,
+ reward INTEGER NOT NULL,
+ location TEXT,
+ created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+ user_id INTEGER NOT NULL REFERENCES users
+);

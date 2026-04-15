@@ -6,6 +6,8 @@
 </head>
 
 <body>
+  <h1>Uusi ilmoitus</h1>
+
   <form action="/create_item" method="post">
     <p>
       Otsikko: <br />
@@ -13,16 +15,26 @@
     </p>
 
     <p>
-        Kuvaus: <br />
-        <textarea name= "description" rows="8" cols="50"></textarea>
+      Kuvaus: <br />
+      <textarea name="description" rows="8" cols="50"></textarea>
     </p>
+
     <p>
-        Maksettava palkkio: <br />
-        <input type="text" name="reward" /> €
+      Sijainti: <br />
+      <input type="text" name="location" />
+    </p>
+
+    <p>
+      Maksettava palkkio: <br />
+      <input type="text" name="reward" /> €
     </p>
 
     <input type="submit" value="Luo ilmoitus" />
   </form>
+
+  <p>
+    <a href="/">Takaisin etusivulle</a>
+  </p>
 </body>
 
 </html>
