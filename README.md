@@ -21,14 +21,12 @@ Sovelluksessa on tällä hetkellä seuraavat toiminnot:
   - Avaa ilmoitus
   - Muokkaa ilmoitusta
   - Poista ilmoitus
+  - Avaa oma profiili/käyttäjäsivu
+  - valitse kategoria ilmoitukselle
+  - avaa ilmoituksen tekijän käyttäjäsivu 
 
 
 -
 -
 -
-
-Sovelluksen kuvaus, näitä toimintoja ei ole vielä olemassa 
-( - Käyttäjä pystyy etsimään tietokohteita hakusanalla tai muulla perusteella (esim. sijainti, maksettava palkkio). Käyttäjä pystyy hakemaan sekä itse lisäämiään että muiden käyttäjien lisäämiä ilmoituksia.
-- Sovelluksessa on käyttäjäsivut, jotka näyttävät jokaisesta käyttäjästä tilastoja (esim. käyttäjän saamat arvostelut, ilmoitusten määrä, tehtyjen töiden määrä) ja käyttäjän lisäämät ilmoitukset.
-- Käyttäjä pystyy valitsemaan ilmoitukselle yhden tai useamman luokittelun. Mahdolliset luokat ovat tietokannassa (esim. työn tyyppi, kesto, maksettu palkkio)
-- Käyttäjä voi jättää arvioita toisista käyttäjistä toteutuneen työn jälkeen )
+Sovelluksen kuvaus/työn alla olevat toiminnot:  Käyttäjä voi jättää arvioita toisista käyttäjistä toteutuneen työn jälkeen, haussa voi rajata töitä sijainnin / työn tyypin avulla, sivun ulkoasun rakentaminen css avulla 
