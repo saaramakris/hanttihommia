@@ -6,10 +6,20 @@
 </head>
 
 <body>
+  <div style="text-align: right;">
+    {% if session.username %}
+    Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+    {% endif %}
+  </div>
+
   <h1>{{ item.title }}</h1>
 
   <p>
-    Ilmoittaja: {{ item.username }}
+    Ilmoittaja: <a href="/user/{{ item.user_id }}">{{ item.username }}</a>
+  </p>
+
+  <p>
+    Luokitus: {{ item.category }}
   </p>
 
   <p>

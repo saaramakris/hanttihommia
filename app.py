@@ -13,6 +13,14 @@ app = Flask(__name__)
 
 app.secret_key = config.secret_key
 
+categories = [
+    "Kotityöt",
+    "Puutarha/Pihatyöt",
+    "Kuljetus",
+    "Kantaminen",
+    "Muu"
+]
+
 
 def require_login():
     if "user_id" not in session:
@@ -27,6 +35,7 @@ def get_item(item_id):
                items.description,
                items.reward,
                items.location,
+               items.category,
                items.created_at,
                items.user_id,
                users.username
@@ -34,6 +43,20 @@ def get_item(item_id):
         WHERE items.user_id = users.id AND items.id = ?
     """
     result = db.query(sql, [item_id])
+
+    if len(result) == 0:
+        return None
+
+    return result[0]
+
+
+def get_user(user_id):
+    sql = """
+        SELECT id, username, created_at
+        FROM users
+        WHERE id = ?
+    """
+    result = db.query(sql, [user_id])
 
     if len(result) == 0:
         return None
@@ -53,6 +76,7 @@ def index():
                    items.description,
                    items.reward,
                    items.location,
+                   items.category,
                    items.created_at,
                    items.user_id,
                    users.username
@@ -69,6 +93,7 @@ def index():
                    items.description,
                    items.reward,
                    items.location,
+                   items.category,
                    items.created_at,
                    items.user_id,
                    users.username
@@ -149,12 +174,37 @@ def logout():
     return redirect("/")
 
 
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+    user = get_user(user_id)
+
+    if not user:
+        return "VIRHE: käyttäjää ei löytynyt"
+
+    sql = """
+        SELECT items.id,
+               items.title,
+               items.description,
+               items.reward,
+               items.location,
+               items.category,
+               items.created_at,
+               items.user_id
+        FROM items
+        WHERE items.user_id = ?
+        ORDER BY items.id DESC
+    """
+    items = db.query(sql, [user_id])
+
+    return render_template("user.html", user=user, items=items)
+
+
 @app.route("/new_item")
 def new_item():
     if not require_login():
         return redirect("/login")
 
-    return render_template("new_item.html")
+    return render_template("new_item.html", categories=categories)
 
 
 @app.route("/create_item", methods=["POST"])
@@ -166,6 +216,7 @@ def create_item():
     description = request.form["description"].strip()
     reward = request.form["reward"].strip()
     location = request.form["location"].strip()
+    category = request.form["category"]
 
     if not title:
         return "VIRHE: otsikko puuttuu"
@@ -176,6 +227,9 @@ def create_item():
     if not reward:
         return "VIRHE: palkkio puuttuu"
 
+    if category not in categories:
+        return "VIRHE: virheellinen luokitus"
+
     try:
         reward_value = int(reward)
     except ValueError:
@@ -185,10 +239,10 @@ def create_item():
         return "VIRHE: palkkio ei voi olla negatiivinen"
 
     sql = """
-        INSERT INTO items (title, description, reward, location, user_id)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO items (title, description, reward, location, category, user_id)
+        VALUES (?, ?, ?, ?, ?, ?)
     """
-    db.execute(sql, [title, description, reward_value, location, session["user_id"]])
+    db.execute(sql, [title, description, reward_value, location, category, session["user_id"]])
 
     return redirect("/")
 
@@ -216,7 +270,7 @@ def edit_item(item_id):
     if item["user_id"] != session["user_id"]:
         return "VIRHE: ei oikeutta muokata tätä ilmoitusta"
 
-    return render_template("edit_item.html", item=item)
+    return render_template("edit_item.html", item=item, categories=categories)
 
 
 @app.route("/update_item/<int:item_id>", methods=["POST"])
@@ -236,6 +290,7 @@ def update_item(item_id):
     description = request.form["description"].strip()
     reward = request.form["reward"].strip()
     location = request.form["location"].strip()
+    category = request.form["category"]
 
     if not title:
         return "VIRHE: otsikko puuttuu"
@@ -245,6 +300,9 @@ def update_item(item_id):
 
     if not reward:
         return "VIRHE: palkkio puuttuu"
+
+    if category not in categories:
+        return "VIRHE: virheellinen luokitus"
 
     try:
         reward_value = int(reward)
@@ -256,10 +314,10 @@ def update_item(item_id):
 
     sql = """
         UPDATE items
-        SET title = ?, description = ?, reward = ?, location = ?
+        SET title = ?, description = ?, reward = ?, location = ?, category = ?
         WHERE id = ?
     """
-    db.execute(sql, [title, description, reward_value, location, item_id])
+    db.execute(sql, [title, description, reward_value, location, category, item_id])
 
     return redirect("/item/" + str(item_id))
 

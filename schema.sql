@@ -4,7 +4,8 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
  id INTEGER PRIMARY KEY,
  username TEXT UNIQUE NOT NULL,
- password_hash TEXT NOT NULL
+ password_hash TEXT NOT NULL,
+ created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE items (
@@ -13,6 +14,7 @@ CREATE TABLE items (
  description TEXT NOT NULL,
  reward INTEGER NOT NULL,
  location TEXT,
+ category TEXT NOT NULL,
  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
  user_id INTEGER NOT NULL REFERENCES users
 );

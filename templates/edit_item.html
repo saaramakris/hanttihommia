@@ -6,6 +6,12 @@
 </head>
 
 <body>
+  <div style="text-align: right;">
+    {% if session.username %}
+    Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+    {% endif %}
+  </div>
+
   <h1>Muokkaa ilmoitusta</h1>
 
   <form action="/update_item/{{ item.id }}" method="post">
@@ -17,6 +23,17 @@
     <p>
       Kuvaus: <br />
       <textarea name="description" rows="8" cols="50">{{ item.description }}</textarea>
+    </p>
+
+    <p>
+      Luokitus: <br />
+      <select name="category">
+        {% for category in categories %}
+        <option value="{{ category }}" {% if category == item.category %}selected{% endif %}>
+          {{ category }}
+        </option>
+        {% endfor %}
+      </select>
     </p>
 
     <p>
