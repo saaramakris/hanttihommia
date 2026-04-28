@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
@@ -6,6 +7,7 @@
 </head>
 
 <body>
+
   <div style="text-align: right;">
     {% if session.username %}
     Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
@@ -46,12 +48,14 @@
       <input type="text" name="reward" value="{{ item.reward }}" /> €
     </p>
 
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Tallenna muutokset" />
   </form>
 
   <p>
     <a href="/item/{{ item.id }}">Takaisin ilmoitukseen</a>
   </p>
+
 </body>
 
 </html>

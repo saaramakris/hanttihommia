@@ -1,16 +1,13 @@
 from flask import Flask
 import sqlite3
-
-from flask import redirect, render_template, request, session
-
+import secrets
+from flask import abort, redirect, render_template, request, session
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
-
 import db
 import config
 
 app = Flask(__name__)
-
 app.secret_key = config.secret_key
 
 categories = [
@@ -21,12 +18,14 @@ categories = [
     "Muu"
 ]
 
-
 def require_login():
     if "user_id" not in session:
         return False
     return True
 
+def check_csrf():
+    if request.form.get("csrf_token") != session.get("csrf_token"):
+        abort(403)
 
 def get_item(item_id):
     sql = """
@@ -49,7 +48,6 @@ def get_item(item_id):
 
     return result[0]
 
-
 def get_user(user_id):
     sql = """
         SELECT id, username, created_at
@@ -62,7 +60,6 @@ def get_user(user_id):
         return None
 
     return result[0]
-
 
 @app.route("/")
 def index():
@@ -105,11 +102,9 @@ def index():
 
     return render_template("index.html", items=items, query=query)
 
-
 @app.route("/register")
 def register():
     return render_template("register.html")
-
 
 @app.route("/create", methods=["POST"])
 def create():
@@ -136,7 +131,6 @@ def create():
 
     return redirect("/login")
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
@@ -158,10 +152,10 @@ def login():
         if check_password_hash(password_hash, password):
             session["user_id"] = user["id"]
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             return "VIRHE: väärä tunnus tai salasana"
-
 
 @app.route("/logout")
 def logout():
@@ -171,8 +165,10 @@ def logout():
     if "username" in session:
         del session["username"]
 
-    return redirect("/")
+    if "csrf_token" in session:
+        del session["csrf_token"]
 
+    return redirect("/")
 
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
@@ -198,7 +194,6 @@ def show_user(user_id):
 
     return render_template("user.html", user=user, items=items)
 
-
 @app.route("/new_item")
 def new_item():
     if not require_login():
@@ -206,11 +201,12 @@ def new_item():
 
     return render_template("new_item.html", categories=categories)
 
-
 @app.route("/create_item", methods=["POST"])
 def create_item():
     if not require_login():
         return redirect("/login")
+
+    check_csrf()
 
     title = request.form["title"].strip()
     description = request.form["description"].strip()
@@ -246,7 +242,6 @@ def create_item():
 
     return redirect("/")
 
-
 @app.route("/item/<int:item_id>")
 def show_item(item_id):
     item = get_item(item_id)
@@ -255,7 +250,6 @@ def show_item(item_id):
         return "VIRHE: ilmoitusta ei löytynyt"
 
     return render_template("show_item.html", item=item)
-
 
 @app.route("/edit_item/<int:item_id>")
 def edit_item(item_id):
@@ -272,11 +266,12 @@ def edit_item(item_id):
 
     return render_template("edit_item.html", item=item, categories=categories)
 
-
 @app.route("/update_item/<int:item_id>", methods=["POST"])
 def update_item(item_id):
     if not require_login():
         return redirect("/login")
+
+    check_csrf()
 
     item = get_item(item_id)
 
@@ -321,11 +316,12 @@ def update_item(item_id):
 
     return redirect("/item/" + str(item_id))
 
-
 @app.route("/delete_item/<int:item_id>", methods=["POST"])
 def delete_item(item_id):
     if not require_login():
         return redirect("/login")
+
+    check_csrf()
 
     item = get_item(item_id)
 
