@@ -1,27 +1,23 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
-  <title>Kirjautuminen</title>
+  <title>Kirjaudu sisään</title>
 </head>
 
 <body>
-  <h1>Kirjautuminen</h1>
 
-  {% if session.username %}
-  <p>
-    Olet kirjautunut nimellä {{ session.username }}
-  </p>
+  <h1>Kirjaudu sisään</h1>
 
-  <p>
-    <a href="/">Etusivulle</a>
-    <a href="/logout">Kirjaudu ulos</a>
-  </p>
-  {% else %}
+  {% if error %}
+  <p style="color: red;">VIRHE: {{ error }}</p>
+  {% endif %}
+
   <form action="/login" method="post">
     <p>
       Tunnus: <br />
-      <input type="text" name="username" />
+      <input type="text" name="username" value="{{ username or '' }}" />
     </p>
 
     <p>
@@ -29,13 +25,13 @@
       <input type="password" name="password" />
     </p>
 
-    <input type="submit" value="Kirjaudu" />
+    <input type="submit" value="Kirjaudu sisään" />
   </form>
 
   <p>
-    <a href="/">Etusivulle</a>
+    <a href="/register">Luo tunnus</a>
   </p>
-  {% endif %}
+
 </body>
 
 </html>

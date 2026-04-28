@@ -16,6 +16,10 @@
 
   <h1>Muokkaa ilmoitusta</h1>
 
+  {% if error %}
+  <p style="color: red;">VIRHE: {{ error }}</p>
+  {% endif %}
+
   <form action="/update_item/{{ item.id }}" method="post">
     <p>
       Otsikko: <br />

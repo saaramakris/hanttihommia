@@ -113,13 +113,13 @@ def create():
     password2 = request.form["password2"]
 
     if not username:
-        return "VIRHE: tunnus puuttuu"
+        return render_template("register.html", error="Tunnus puuttuu", username=username)
 
     if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
+        return render_template("register.html", error="Salasanat eivät ole samat", username=username)
 
     if len(password1) < 4:
-        return "VIRHE: salasanan pitää olla vähintään 4 merkkiä pitkä"
+        return render_template("register.html", error="Salasanan pitää olla vähintään 4 merkkiä pitkä", username=username)
 
     password_hash = generate_password_hash(password1, method="pbkdf2:sha256")
 
@@ -127,7 +127,7 @@ def create():
         sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
         db.execute(sql, [username, password_hash])
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        return render_template("register.html", error="Tunnus on jo varattu", username=username)
 
     return redirect("/login")
 
@@ -144,7 +144,7 @@ def login():
         result = db.query(sql, [username])
 
         if len(result) == 0:
-            return "VIRHE: väärä tunnus tai salasana"
+            return render_template("login.html", error="Väärä tunnus tai salasana", username=username)
 
         user = result[0]
         password_hash = user["password_hash"]
@@ -155,7 +155,7 @@ def login():
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
-            return "VIRHE: väärä tunnus tai salasana"
+            return render_template("login.html", error="Väärä tunnus tai salasana", username=username)
 
 @app.route("/logout")
 def logout():
@@ -214,25 +214,33 @@ def create_item():
     location = request.form["location"].strip()
     category = request.form["category"]
 
+    form = {
+        "title": title,
+        "description": description,
+        "reward": reward,
+        "location": location,
+        "category": category
+    }
+
     if not title:
-        return "VIRHE: otsikko puuttuu"
+        return render_template("new_item.html", categories=categories, error="Otsikko puuttuu", form=form)
 
     if not description:
-        return "VIRHE: kuvaus puuttuu"
+        return render_template("new_item.html", categories=categories, error="Kuvaus puuttuu", form=form)
 
     if not reward:
-        return "VIRHE: palkkio puuttuu"
+        return render_template("new_item.html", categories=categories, error="Palkkio puuttuu", form=form)
 
     if category not in categories:
-        return "VIRHE: virheellinen luokitus"
+        return render_template("new_item.html", categories=categories, error="Virheellinen luokitus", form=form)
 
     try:
         reward_value = int(reward)
     except ValueError:
-        return "VIRHE: palkkion pitää olla kokonaisluku"
+        return render_template("new_item.html", categories=categories, error="Palkkion pitää olla kokonaisluku", form=form)
 
     if reward_value < 0:
-        return "VIRHE: palkkio ei voi olla negatiivinen"
+        return render_template("new_item.html", categories=categories, error="Palkkio ei voi olla negatiivinen", form=form)
 
     sql = """
         INSERT INTO items (title, description, reward, location, category, user_id)
@@ -287,25 +295,34 @@ def update_item(item_id):
     location = request.form["location"].strip()
     category = request.form["category"]
 
+    form = {
+        "id": item_id,
+        "title": title,
+        "description": description,
+        "reward": reward,
+        "location": location,
+        "category": category
+    }
+
     if not title:
-        return "VIRHE: otsikko puuttuu"
+        return render_template("edit_item.html", item=form, categories=categories, error="Otsikko puuttuu")
 
     if not description:
-        return "VIRHE: kuvaus puuttuu"
+        return render_template("edit_item.html", item=form, categories=categories, error="Kuvaus puuttuu")
 
     if not reward:
-        return "VIRHE: palkkio puuttuu"
+        return render_template("edit_item.html", item=form, categories=categories, error="Palkkio puuttuu")
 
     if category not in categories:
-        return "VIRHE: virheellinen luokitus"
+        return render_template("edit_item.html", item=form, categories=categories, error="Virheellinen luokitus")
 
     try:
         reward_value = int(reward)
     except ValueError:
-        return "VIRHE: palkkion pitää olla kokonaisluku"
+        return render_template("edit_item.html", item=form, categories=categories, error="Palkkion pitää olla kokonaisluku")
 
     if reward_value < 0:
-        return "VIRHE: palkkio ei voi olla negatiivinen"
+        return render_template("edit_item.html", item=form, categories=categories, error="Palkkio ei voi olla negatiivinen")
 
     sql = """
         UPDATE items

@@ -16,34 +16,40 @@
 
   <h1>Uusi ilmoitus</h1>
 
+  {% if error %}
+  <p style="color: red;">VIRHE: {{ error }}</p>
+  {% endif %}
+
   <form action="/create_item" method="post">
     <p>
       Otsikko: <br />
-      <input type="text" name="title" />
+      <input type="text" name="title" value="{{ form.title if form else '' }}" />
     </p>
 
     <p>
       Kuvaus: <br />
-      <textarea name="description" rows="8" cols="50"></textarea>
+      <textarea name="description" rows="8" cols="50">{{ form.description if form else '' }}</textarea>
     </p>
 
     <p>
       Luokitus: <br />
       <select name="category">
         {% for category in categories %}
-        <option value="{{ category }}">{{ category }}</option>
+        <option value="{{ category }}" {% if form and form.category == category %}selected{% endif %}>
+          {{ category }}
+        </option>
         {% endfor %}
       </select>
     </p>
 
     <p>
       Sijainti: <br />
-      <input type="text" name="location" />
+      <input type="text" name="location" value="{{ form.location if form else '' }}" />
     </p>
 
     <p>
       Maksettava palkkio: <br />
-      <input type="text" name="reward" /> €
+      <input type="text" name="reward" value="{{ form.reward if form else '' }}" /> €
     </p>
 
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />

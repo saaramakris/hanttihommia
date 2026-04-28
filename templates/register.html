@@ -1,17 +1,23 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
-  <title>Rekisteröinti</title>
+  <title>Luo tunnus</title>
 </head>
 
 <body>
+
   <h1>Luo tunnus</h1>
+
+  {% if error %}
+  <p style="color: red;">VIRHE: {{ error }}</p>
+  {% endif %}
 
   <form action="/create" method="post">
     <p>
       Tunnus: <br />
-      <input type="text" name="username" />
+      <input type="text" name="username" value="{{ username or '' }}" />
     </p>
 
     <p>
@@ -28,8 +34,9 @@
   </form>
 
   <p>
-    <a href="/">Etusivulle</a>
+    <a href="/login">Kirjaudu sisään</a>
   </p>
+
 </body>
 
 </html>
