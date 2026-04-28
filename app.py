@@ -1,11 +1,11 @@
-from flask import Flask
-import sqlite3
 import secrets
-from flask import abort, redirect, render_template, request, session
-from werkzeug.security import generate_password_hash
-from werkzeug.security import check_password_hash
-import db
+import sqlite3
+
+from flask import Flask, abort, redirect, render_template, request, session
+
 import config
+import items
+import users
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -27,80 +27,16 @@ def check_csrf():
     if request.form.get("csrf_token") != session.get("csrf_token"):
         abort(403)
 
-def get_item(item_id):
-    sql = """
-        SELECT items.id,
-               items.title,
-               items.description,
-               items.reward,
-               items.location,
-               items.category,
-               items.created_at,
-               items.user_id,
-               users.username
-        FROM items, users
-        WHERE items.user_id = users.id AND items.id = ?
-    """
-    result = db.query(sql, [item_id])
-
-    if len(result) == 0:
-        return None
-
-    return result[0]
-
-def get_user(user_id):
-    sql = """
-        SELECT id, username, created_at
-        FROM users
-        WHERE id = ?
-    """
-    result = db.query(sql, [user_id])
-
-    if len(result) == 0:
-        return None
-
-    return result[0]
-
 @app.route("/")
 def index():
     query = request.args.get("q", "").strip()
 
     if query:
-        like = "%" + query + "%"
-        sql = """
-            SELECT items.id,
-                   items.title,
-                   items.description,
-                   items.reward,
-                   items.location,
-                   items.category,
-                   items.created_at,
-                   items.user_id,
-                   users.username
-            FROM items, users
-            WHERE items.user_id = users.id
-              AND (items.title LIKE ? OR items.description LIKE ? OR items.location LIKE ?)
-            ORDER BY items.id DESC
-        """
-        items = db.query(sql, [like, like, like])
+        all_items = items.search_items(query)
     else:
-        sql = """
-            SELECT items.id,
-                   items.title,
-                   items.description,
-                   items.reward,
-                   items.location,
-                   items.category,
-                   items.created_at,
-                   items.user_id,
-                   users.username
-            FROM items, users
-            WHERE items.user_id = users.id
-            ORDER BY items.id DESC
-        """
-        items = db.query(sql)
+        all_items = items.get_items()
 
-    return render_template("index.html", items=items, query=query)
+    return render_template("index.html", items=all_items, query=query)
 
 @app.route("/register")
 def register():
@@ -121,11 +57,8 @@ def create():
     if len(password1) < 4:
         return render_template("register.html", error="Salasanan pitää olla vähintään 4 merkkiä pitkä", username=username)
 
-    password_hash = generate_password_hash(password1, method="pbkdf2:sha256")
-
     try:
-        sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-        db.execute(sql, [username, password_hash])
+        users.create_user(username, password1)
     except sqlite3.IntegrityError:
         return render_template("register.html", error="Tunnus on jo varattu", username=username)
 
@@ -136,26 +69,18 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
 
-    if request.method == "POST":
-        username = request.form["username"].strip()
-        password = request.form["password"]
+    username = request.form["username"].strip()
+    password = request.form["password"]
 
-        sql = "SELECT id, password_hash FROM users WHERE username = ?"
-        result = db.query(sql, [username])
+    user = users.check_login(username, password)
 
-        if len(result) == 0:
-            return render_template("login.html", error="Väärä tunnus tai salasana", username=username)
+    if user:
+        session["user_id"] = user["id"]
+        session["username"] = username
+        session["csrf_token"] = secrets.token_hex(16)
+        return redirect("/")
 
-        user = result[0]
-        password_hash = user["password_hash"]
-
-        if check_password_hash(password_hash, password):
-            session["user_id"] = user["id"]
-            session["username"] = username
-            session["csrf_token"] = secrets.token_hex(16)
-            return redirect("/")
-        else:
-            return render_template("login.html", error="Väärä tunnus tai salasana", username=username)
+    return render_template("login.html", error="Väärä tunnus tai salasana", username=username)
 
 @app.route("/logout")
 def logout():
@@ -172,27 +97,14 @@ def logout():
 
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
-    user = get_user(user_id)
+    user = users.get_user(user_id)
 
     if not user:
         return "VIRHE: käyttäjää ei löytynyt"
 
-    sql = """
-        SELECT items.id,
-               items.title,
-               items.description,
-               items.reward,
-               items.location,
-               items.category,
-               items.created_at,
-               items.user_id
-        FROM items
-        WHERE items.user_id = ?
-        ORDER BY items.id DESC
-    """
-    items = db.query(sql, [user_id])
+    user_items = users.get_items(user_id)
 
-    return render_template("user.html", user=user, items=items)
+    return render_template("user.html", user=user, items=user_items)
 
 @app.route("/new_item")
 def new_item():
@@ -242,17 +154,13 @@ def create_item():
     if reward_value < 0:
         return render_template("new_item.html", categories=categories, error="Palkkio ei voi olla negatiivinen", form=form)
 
-    sql = """
-        INSERT INTO items (title, description, reward, location, category, user_id)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """
-    db.execute(sql, [title, description, reward_value, location, category, session["user_id"]])
+    items.add_item(title, description, reward_value, location, category, session["user_id"])
 
     return redirect("/")
 
 @app.route("/item/<int:item_id>")
 def show_item(item_id):
-    item = get_item(item_id)
+    item = items.get_item(item_id)
 
     if not item:
         return "VIRHE: ilmoitusta ei löytynyt"
@@ -264,7 +172,7 @@ def edit_item(item_id):
     if not require_login():
         return redirect("/login")
 
-    item = get_item(item_id)
+    item = items.get_item(item_id)
 
     if not item:
         return "VIRHE: ilmoitusta ei löytynyt"
@@ -281,7 +189,7 @@ def update_item(item_id):
 
     check_csrf()
 
-    item = get_item(item_id)
+    item = items.get_item(item_id)
 
     if not item:
         return "VIRHE: ilmoitusta ei löytynyt"
@@ -324,12 +232,7 @@ def update_item(item_id):
     if reward_value < 0:
         return render_template("edit_item.html", item=form, categories=categories, error="Palkkio ei voi olla negatiivinen")
 
-    sql = """
-        UPDATE items
-        SET title = ?, description = ?, reward = ?, location = ?, category = ?
-        WHERE id = ?
-    """
-    db.execute(sql, [title, description, reward_value, location, category, item_id])
+    items.update_item(item_id, title, description, reward_value, location, category)
 
     return redirect("/item/" + str(item_id))
 
@@ -340,7 +243,7 @@ def delete_item(item_id):
 
     check_csrf()
 
-    item = get_item(item_id)
+    item = items.get_item(item_id)
 
     if not item:
         return "VIRHE: ilmoitusta ei löytynyt"
@@ -348,7 +251,6 @@ def delete_item(item_id):
     if item["user_id"] != session["user_id"]:
         return "VIRHE: ei oikeutta poistaa tätä ilmoitusta"
 
-    sql = "DELETE FROM items WHERE id = ?"
-    db.execute(sql, [item_id])
+    items.delete_item(item_id)
 
     return redirect("/")
