@@ -20,13 +20,14 @@ Sovelluksessa on tällä hetkellä seuraavat toiminnot:
   - Hae ilmoitusta hakusanalla
   - Avaa ilmoitus
   - Muokkaa ilmoitusta
-  - Poista ilmoitus
+  (- Poista ilmoitus)
   - Avaa oma profiili/käyttäjäsivu
   - valitse kategoria ilmoitukselle
-  - avaa ilmoituksen tekijän käyttäjäsivu 
+  - avaa ilmoituksen tekijän käyttäjäsivu
+  - Lähetä viesti ilmoituksen tekijälle 
 
 
 -
 -
 -
-Sovelluksen kuvaus/työn alla olevat toiminnot:  Käyttäjä voi jättää arvioita toisista käyttäjistä toteutuneen työn jälkeen, haussa voi rajata töitä sijainnin / työn tyypin avulla, sivun ulkoasun rakentaminen css avulla 
+Sovelluksen kuvaus/työn alla olevat toiminnot:  haussa voi rajata töitä sijainnin / työn tyypin avulla, postilaatikkoon erilliset kansiot saapuneille ja lähetetyille, sivun ulkoasun rakentaminen css avulla, uusin päivitys hajoitti jostain syystä ilmoituksen poistamisen mutta korjaan sen myöhemmin kun keksin mikä siinä meni pieleen 
