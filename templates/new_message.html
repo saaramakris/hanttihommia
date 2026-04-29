@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title>Ota yhteyttä</title>
+</head>
+
+<body>
+
+  <div style="text-align: right;">
+    {% if session.username %}
+    Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+    <a href="/messages">Viestit</a>
+    {% endif %}
+  </div>
+
+  <h1>Ota yhteyttä</h1>
+
+  <p>
+    Ilmoitus: <a href="/item/{{ item.id }}">{{ item.title }}</a>
+  </p>
+
+  {% if error %}
+  <p style="color: red;">VIRHE: {{ error }}</p>
+  {% endif %}
+
+  <form action="/send_message/{{ item.id }}" method="post">
+    <p>
+      Viesti: <br />
+      <textarea name="content" rows="8" cols="50" maxlength="5000"></textarea>
+    </p>
+
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="submit" value="Lähetä viesti" />
+  </form>
+
+  <p>
+    <a href="/item/{{ item.id }}">Takaisin ilmoitukseen</a>
+  </p>
+
+</body>
+
+</html>

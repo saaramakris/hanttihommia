@@ -5,6 +5,7 @@ from flask import Flask, abort, redirect, render_template, request, session
 
 import config
 import items
+import messages as message_queries
 import users
 
 app = Flask(__name__)
@@ -101,7 +102,48 @@ def messages():
     if not require_login():
         return redirect("/login")
 
-    return render_template("messages.html")
+    user_messages = message_queries.get_messages(session["user_id"])
+
+    return render_template("messages.html", messages=user_messages)
+
+@app.route("/contact/<int:item_id>")
+def contact(item_id):
+    if not require_login():
+        return redirect("/login")
+
+    item = items.get_item(item_id)
+
+    if not item:
+        return "VIRHE: ilmoitusta ei löytynyt"
+
+    if item["user_id"] == session["user_id"]:
+        return "VIRHE: et voi lähettää viestiä omaan ilmoitukseesi"
+
+    return render_template("new_message.html", item=item)
+
+@app.route("/send_message/<int:item_id>", methods=["POST"])
+def send_message(item_id):
+    if not require_login():
+        return redirect("/login")
+
+    check_csrf()
+
+    item = items.get_item(item_id)
+
+    if not item:
+        return "VIRHE: ilmoitusta ei löytynyt"
+
+    if item["user_id"] == session["user_id"]:
+        return "VIRHE: et voi lähettää viestiä omaan ilmoitukseesi"
+
+    content = request.form["content"].strip()
+
+    if not content:
+        return render_template("new_message.html", item=item, error="Viesti puuttuu")
+
+    message_queries.add_message(session["user_id"], item["user_id"], item_id, content)
+
+    return redirect("/messages")
 
 @app.route("/user/<int:user_id>")
 def show_user(user_id):

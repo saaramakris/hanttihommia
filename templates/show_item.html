@@ -37,6 +37,14 @@
 
   {% endif %}
 
+  {% if session.user_id and session.user_id != item.user_id %}
+
+  <p>
+    <a href="/contact/{{ item.id }}">Ota yhteyttä</a>
+  </p>
+
+  {% endif %}
+
   <p>
     <a href="/">Takaisin etusivulle</a>
   </p>
