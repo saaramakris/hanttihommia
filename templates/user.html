@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
@@ -6,9 +7,11 @@
 </head>
 
 <body>
+
   <div style="text-align: right;">
     {% if session.username %}
     Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+    <a href="/messages">Viestit</a>
     {% endif %}
   </div>
 
@@ -21,29 +24,36 @@
   <h2>Aktiiviset ilmoitukset</h2>
 
   {% if items %}
-    {% for item in items %}
-    <hr />
 
-    <h3><a href="/item/{{ item.id }}">{{ item.title }}</a></h3>
+  {% for item in items %}
 
-    <p>
-      Luokitus: {{ item.category }} <br />
-      Sijainti: {{ item.location if item.location else "-" }} <br />
-      Palkkio: {{ item.reward }} € <br />
-      Lisätty: {{ item.created_at }}
-    </p>
+  <hr />
 
-    <p>
-      {{ item.description }}
-    </p>
-    {% endfor %}
+  <h3><a href="/item/{{ item.id }}">{{ item.title }}</a></h3>
+
+  <p>
+    Luokitus: {{ item.category }} <br />
+    Sijainti: {{ item.location if item.location else "-" }} <br />
+    Palkkio: {{ item.reward }} € <br />
+    Lisätty: {{ item.created_at }}
+  </p>
+
+  <p>
+    {{ item.description }}
+  </p>
+
+  {% endfor %}
+
   {% else %}
-    <p>Käyttäjällä ei ole aktiivisia ilmoituksia.</p>
+
+  <p>Käyttäjällä ei ole aktiivisia ilmoituksia.</p>
+
   {% endif %}
 
   <p>
     <a href="/">Takaisin etusivulle</a>
   </p>
+
 </body>
 
 </html>

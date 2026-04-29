@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title>Viestit</title>
+</head>
+
+<body>
+
+  <div style="text-align: right;">
+    {% if session.username %}
+    Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+    <a href="/messages">Viestit</a>
+    {% endif %}
+  </div>
+
+  <h1>Viestit</h1>
+
+  <h2>Uudet viestit</h2>
+
+  <p>
+    <a href="/">Takaisin etusivulle</a>
+  </p>
+
+</body>
+
+</html>

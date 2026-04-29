@@ -21,6 +21,7 @@ categories = [
 def require_login():
     if "user_id" not in session:
         return False
+
     return True
 
 def check_csrf():
@@ -94,6 +95,13 @@ def logout():
         del session["csrf_token"]
 
     return redirect("/")
+
+@app.route("/messages")
+def messages():
+    if not require_login():
+        return redirect("/login")
+
+    return render_template("messages.html")
 
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
