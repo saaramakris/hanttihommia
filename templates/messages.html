@@ -19,6 +19,10 @@
 
   <h2>Uudet viestit</h2>
 
+  {% if error %}
+  <p style="color: red;">VIRHE: {{ error }}</p>
+  {% endif %}
+
   {% if messages %}
 
   {% for message in messages %}
@@ -26,7 +30,7 @@
   <hr />
 
   <p>
-    Ilmoitus: <a href="/item/{{ message.item_id }}">{{ message.item_title }}</a> <br />
+    Ilmoitus: <a href="/message_item/{{ message.item_id }}">{{ message.item_title }}</a> <br />
     Lähettäjä: <a href="/user/{{ message.sender_id }}">{{ message.sender_username }}</a> <br />
     Vastaanottaja: <a href="/user/{{ message.receiver_id }}">{{ message.receiver_username }}</a> <br />
     Lähetetty: {{ message.created_at }}

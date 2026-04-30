@@ -27,6 +27,7 @@ def get_items(user_id):
                items.user_id
         FROM items
         WHERE items.user_id = ?
+          AND items.deleted = 0
         ORDER BY items.id DESC
     """
     return db.query(sql, [user_id])

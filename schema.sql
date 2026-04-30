@@ -17,7 +17,8 @@ CREATE TABLE items (
     location TEXT,
     category TEXT NOT NULL,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-    user_id INTEGER NOT NULL REFERENCES users
+    user_id INTEGER NOT NULL REFERENCES users,
+    deleted INTEGER DEFAULT 0
 );
 
 CREATE TABLE messages (

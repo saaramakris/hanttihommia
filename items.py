@@ -13,6 +13,7 @@ def get_items():
                users.username
         FROM items, users
         WHERE items.user_id = users.id
+          AND items.deleted = 0
         ORDER BY items.id DESC
     """
     return db.query(sql)
@@ -32,6 +33,7 @@ def search_items(query):
                users.username
         FROM items, users
         WHERE items.user_id = users.id
+          AND items.deleted = 0
           AND (items.title LIKE ? OR items.description LIKE ? OR items.location LIKE ?)
         ORDER BY items.id DESC
     """
@@ -49,7 +51,9 @@ def get_item(item_id):
                items.user_id,
                users.username
         FROM items, users
-        WHERE items.user_id = users.id AND items.id = ?
+        WHERE items.user_id = users.id
+          AND items.deleted = 0
+          AND items.id = ?
     """
     result = db.query(sql, [item_id])
 
@@ -74,5 +78,5 @@ def update_item(item_id, title, description, reward, location, category):
     db.execute(sql, [title, description, reward, location, category, item_id])
 
 def delete_item(item_id):
-    sql = "DELETE FROM items WHERE id = ?"
+    sql = "UPDATE items SET deleted = 1 WHERE id = ?"
     db.execute(sql, [item_id])

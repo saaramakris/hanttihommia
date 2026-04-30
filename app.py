@@ -106,6 +106,23 @@ def messages():
 
     return render_template("messages.html", messages=user_messages)
 
+@app.route("/message_item/<int:item_id>")
+def message_item(item_id):
+    if not require_login():
+        return redirect("/login")
+
+    item = items.get_item(item_id)
+
+    if not item:
+        user_messages = message_queries.get_messages(session["user_id"])
+        return render_template(
+            "messages.html",
+            messages=user_messages,
+            error="Ilmoitusta ei löydy tai se on poistettu"
+        )
+
+    return redirect("/item/" + str(item_id))
+
 @app.route("/contact/<int:item_id>")
 def contact(item_id):
     if not require_login():
@@ -114,7 +131,7 @@ def contact(item_id):
     item = items.get_item(item_id)
 
     if not item:
-        return "VIRHE: ilmoitusta ei löytynyt"
+        return "VIRHE: ilmoitusta ei löydy tai se on poistettu"
 
     if item["user_id"] == session["user_id"]:
         return "VIRHE: et voi lähettää viestiä omaan ilmoitukseesi"
@@ -131,7 +148,7 @@ def send_message(item_id):
     item = items.get_item(item_id)
 
     if not item:
-        return "VIRHE: ilmoitusta ei löytynyt"
+        return "VIRHE: ilmoitusta ei löydy tai se on poistettu"
 
     if item["user_id"] == session["user_id"]:
         return "VIRHE: et voi lähettää viestiä omaan ilmoitukseesi"
@@ -213,7 +230,7 @@ def show_item(item_id):
     item = items.get_item(item_id)
 
     if not item:
-        return "VIRHE: ilmoitusta ei löytynyt"
+        return "VIRHE: ilmoitusta ei löydy tai se on poistettu"
 
     return render_template("show_item.html", item=item)
 
@@ -225,7 +242,7 @@ def edit_item(item_id):
     item = items.get_item(item_id)
 
     if not item:
-        return "VIRHE: ilmoitusta ei löytynyt"
+        return "VIRHE: ilmoitusta ei löydy tai se on poistettu"
 
     if item["user_id"] != session["user_id"]:
         return "VIRHE: ei oikeutta muokata tätä ilmoitusta"
@@ -242,7 +259,7 @@ def update_item(item_id):
     item = items.get_item(item_id)
 
     if not item:
-        return "VIRHE: ilmoitusta ei löytynyt"
+        return "VIRHE: ilmoitusta ei löydy tai se on poistettu"
 
     if item["user_id"] != session["user_id"]:
         return "VIRHE: ei oikeutta muokata tätä ilmoitusta"
@@ -296,7 +313,7 @@ def delete_item(item_id):
     item = items.get_item(item_id)
 
     if not item:
-        return "VIRHE: ilmoitusta ei löytynyt"
+        return "VIRHE: ilmoitusta ei löydy tai se on poistettu"
 
     if item["user_id"] != session["user_id"]:
         return "VIRHE: ei oikeutta poistaa tätä ilmoitusta"
