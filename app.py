@@ -34,13 +34,22 @@ def check_csrf():
 @app.route("/")
 def index():
     query = request.args.get("q", "").strip()
+    location = request.args.get("location", "").strip()
+    category = request.args.get("category", "").strip()
 
-    if query:
-        all_items = items.search_items(query)
+    if query or location or category:
+        all_items = items.search_items(query, location, category)
     else:
         all_items = items.get_items()
 
-    return render_template("index.html", items=all_items, query=query)
+    return render_template(
+        "index.html",
+        items=all_items,
+        query=query,
+        location=location,
+        category=category,
+        categories=categories
+    )
 
 
 @app.route("/register")

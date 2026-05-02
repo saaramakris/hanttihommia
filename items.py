@@ -1,5 +1,6 @@
 import db
 
+
 def get_items():
     sql = """
         SELECT items.id,
@@ -18,8 +19,10 @@ def get_items():
     """
     return db.query(sql)
 
-def search_items(query):
+
+def search_items(query, location, category):
     like = "%" + query + "%"
+    location_like = "%" + location + "%"
 
     sql = """
         SELECT items.id,
@@ -34,10 +37,17 @@ def search_items(query):
         FROM items, users
         WHERE items.user_id = users.id
           AND items.deleted = 0
-          AND (items.title LIKE ? OR items.description LIKE ? OR items.location LIKE ?)
+          AND (? = '' OR items.title LIKE ? OR items.description LIKE ?)
+          AND (? = '' OR items.location LIKE ?)
+          AND (? = '' OR items.category = ?)
         ORDER BY items.id DESC
     """
-    return db.query(sql, [like, like, like])
+    return db.query(sql, [
+        query, like, like,
+        location, location_like,
+        category, category
+    ])
+
 
 def get_item(item_id):
     sql = """
@@ -62,6 +72,7 @@ def get_item(item_id):
 
     return result[0]
 
+
 def add_item(title, description, reward, location, category, user_id):
     sql = """
         INSERT INTO items (title, description, reward, location, category, user_id)
@@ -69,13 +80,19 @@ def add_item(title, description, reward, location, category, user_id):
     """
     db.execute(sql, [title, description, reward, location, category, user_id])
 
+
 def update_item(item_id, title, description, reward, location, category):
     sql = """
         UPDATE items
-        SET title = ?, description = ?, reward = ?, location = ?, category = ?
+        SET title = ?,
+            description = ?,
+            reward = ?,
+            location = ?,
+            category = ?
         WHERE id = ?
     """
     db.execute(sql, [title, description, reward, location, category, item_id])
+
 
 def delete_item(item_id):
     sql = "UPDATE items SET deleted = 1 WHERE id = ?"

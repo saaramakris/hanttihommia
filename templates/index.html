@@ -37,17 +37,39 @@
 
   <form action="/" method="get">
     <p>
-      Hakusana: <br />
+      Hakusana:
       <input type="text" name="q" value="{{ query }}" />
-    </p>
 
-    <input type="submit" value="Hae" />
+      Sijainti:
+      <input type="text" name="location" value="{{ location }}" />
+
+      Luokka:
+      <select name="category">
+        <option value="">Kaikki</option>
+        {% for option in categories %}
+        <option value="{{ option }}" {% if option == category %}selected{% endif %}>
+          {{ option }}
+        </option>
+        {% endfor %}
+      </select>
+
+      <input type="submit" value="Hae" />
+    </p>
   </form>
 
-  {% if query %}
+  {% if query or location or category %}
 
   <p>
-    Hakutulokset hakusanalla "{{ query }}"
+    Hakutulokset
+    {% if query %}
+    hakusanalla "{{ query }}"
+    {% endif %}
+    {% if location %}
+    sijainnilla "{{ location }}"
+    {% endif %}
+    {% if category %}
+    luokassa "{{ category }}"
+    {% endif %}
   </p>
 
   {% endif %}
