@@ -1,57 +1,52 @@
-<!DOCTYPE html>
+{% if session.username %}
+  Kirjautuneena sisään
+  <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+  <a href="/messages">Viestit</a>
+{% endif %}
 
-<html>
+<h1>Viestit</h1>
 
-<head>
-  <title>Viestit</title>
-</head>
+<h2>Viestiketjut</h2>
 
-<body>
+{% if error %}
+  <p>VIRHE: {{ error }}</p>
+{% endif %}
 
-  <div style="text-align: right;">
-    {% if session.username %}
-    Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
-    <a href="/messages">Viestit</a>
-    {% endif %}
-  </div>
-
-  <h1>Viestit</h1>
-
-  <h2>Uudet viestit</h2>
-
-  {% if error %}
-  <p style="color: red;">VIRHE: {{ error }}</p>
-  {% endif %}
-
-  {% if messages %}
-
+{% if messages %}
   {% for message in messages %}
+    <hr>
 
-  <hr />
+    <p>
+      Ilmoitus:
+      <a href="/item/{{ message.item_id }}">{{ message.item_title }}</a>
+    </p>
 
-  <p>
-    Ilmoitus: <a href="/message_item/{{ message.item_id }}">{{ message.item_title }}</a> <br />
-    Lähettäjä: <a href="/user/{{ message.sender_id }}">{{ message.sender_username }}</a> <br />
-    Vastaanottaja: <a href="/user/{{ message.receiver_id }}">{{ message.receiver_username }}</a> <br />
-    Lähetetty: {{ message.created_at }}
-  </p>
+    <p>
+      Lähettäjä:
+      <a href="/user/{{ message.sender_id }}">{{ message.sender_username }}</a>
+    </p>
 
-  <p>
-    {{ message.content }}
-  </p>
+    <p>
+      Vastaanottaja:
+      <a href="/user/{{ message.receiver_id }}">{{ message.receiver_username }}</a>
+    </p>
 
+    <p>
+      Lähetetty: {{ message.created_at }}
+    </p>
+
+    <p>
+      {{ message.content }}
+    </p>
+
+    <p>
+      <a href="/messages/{{ message.thread_id }}">Avaa keskustelu</a>
+    </p>
   {% endfor %}
-
-  {% else %}
-
+{% else %}
   <p>Ei viestejä.</p>
+{% endif %}
 
-  {% endif %}
-
-  <p>
-    <a href="/">Takaisin etusivulle</a>
-  </p>
-
-</body>
-
-</html>
+<p>
+  <a href="/">Takaisin etusivulle</a>
+</p>

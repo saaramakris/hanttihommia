@@ -27,5 +27,6 @@ CREATE TABLE messages (
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     sender_id INTEGER NOT NULL REFERENCES users,
     receiver_id INTEGER NOT NULL REFERENCES users,
-    item_id INTEGER NOT NULL REFERENCES items
+    item_id INTEGER NOT NULL REFERENCES items,
+    thread_id INTEGER REFERENCES messages
 );
