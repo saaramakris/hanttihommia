@@ -1,8 +1,9 @@
-{% if session.username %}
-  Kirjautuneena sisään
-  <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
-  <a href="/messages">Viestit</a>
-{% endif %}
+ <div style="text-align: right;">
+    {% if session.username %}
+    Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+    <a href="/messages">Viestit</a>
+    {% endif %}
+  </div>
 
 <h1>Viestit</h1>
 
