@@ -25,9 +25,10 @@ Sovelluksessa on tällä hetkellä seuraavat toiminnot:
   - valitse kategoria ilmoitukselle
   - avaa ilmoituksen tekijän käyttäjäsivu
   - Lähetä viesti ilmoituksen tekijälle 
+  - Vastaa viestin lähettäjälle / lähetä uusi viesti ketjuun 
 
 
 -
 -
 -
-Sovelluksen kuvaus/työn alla olevat toiminnot:  haussa voi rajata töitä sijainnin / työn tyypin avulla, postilaatikkoon erilliset kansiot saapuneille ja lähetetyille, sivun ulkoasun rakentaminen css avulla, uusin päivitys hajoitti jostain syystä ilmoituksen poistamisen mutta korjaan sen myöhemmin kun keksin mikä siinä meni pieleen 
+Sovelluksen kuvaus/työn alla olevat toiminnot:  haussa voi rajata töitä sijainnin / työn tyypin avulla, postilaatikkoon erilliset kansiot saapuneille ja lähetetyille, sivun ulkoasun rakentaminen css avulla,
