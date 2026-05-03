@@ -15,7 +15,9 @@
     {% endif %}
   </div>
 
-  <h1>Ota yhteyttä</h1>
+<div style="max-width: 700px; margin: auto;">
+
+  <h1 style="text-align: center;" >Ota yhteyttä</h1>
 
   <p>
     Ilmoitus: <a href="/item/{{ item.id }}">{{ item.title }}</a>
@@ -28,7 +30,7 @@
   <form action="/send_message/{{ item.id }}" method="post">
     <p>
       Viesti: <br />
-      <textarea name="content" rows="8" cols="50" maxlength="5000"></textarea>
+      <textarea name="content" id="content" rows="6" cols="60" style="text-align: left;"></textarea>
     </p>
 
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
@@ -38,6 +40,8 @@
   <p>
     <a href="/item/{{ item.id }}">Takaisin ilmoitukseen</a>
   </p>
+
+</div>
 
 </body>
 

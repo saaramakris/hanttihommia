@@ -1,21 +1,23 @@
- <div style="text-align: right;">
-    {% if session.username %}
-    Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
-    <a href="/messages">Viestit</a>
-    {% endif %}
-  </div>
+<div style="text-align: right;">
+  {% if session.username %}
+  Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+  <a href="/messages">Viestit</a>
+  {% endif %}
+</div>
 
-<h1>Viestit</h1>
+<div style="max-width: 700px; margin: auto;">
 
-<h2>Viestiketjut</h2>
+  <h1 style="text-align: center;">Viestit</h1>
 
-{% if error %}
+  <h2>Viestiketjut</h2>
+
+  {% if error %}
   <p>VIRHE: {{ error }}</p>
-{% endif %}
+  {% endif %}
 
-{% if messages %}
+  {% if messages %}
   {% for message in messages %}
-    <hr>
+  <div style="border: 1px solid black; padding: 1em; margin-bottom: 1em;">
 
     <p>
       Ilmoitus:
@@ -43,11 +45,15 @@
     <p>
       <a href="/messages/{{ message.thread_id }}">Avaa keskustelu</a>
     </p>
-  {% endfor %}
-{% else %}
-  <p>Ei viestejä.</p>
-{% endif %}
 
-<p>
-  <a href="/">Takaisin etusivulle</a>
-</p>
+  </div>
+  {% endfor %}
+  {% else %}
+  <p>Ei viestejä.</p>
+  {% endif %}
+
+  <p>
+    <a href="/">Takaisin etusivulle</a>
+  </p>
+
+</div>

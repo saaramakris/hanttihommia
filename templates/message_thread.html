@@ -1,56 +1,62 @@
- <div style="text-align: right;">
-    {% if session.username %}
-    Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
-    <a href="/messages">Viestit</a>
-    {% endif %}
-  </div>
-  
-<h1>Viestiketju</h1>
+<div style="text-align: right;">
+  {% if session.username %}
+  Kirjautuneena sisään <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+  <a href="/messages">Viestit</a>
+  {% endif %}
+</div>
 
-<p>
-  Ilmoitus:
-  <a href="/item/{{ messages[0].item_id }}">{{ messages[0].item_title }}</a>
-</p>
+<div style="max-width: 700px; margin: auto; text-align: center;">
 
-{% if error %}
+  <h1>Viestiketju</h1>
+
+  <p>
+    Ilmoitus:
+    <a href="/item/{{ messages[0].item_id }}">{{ messages[0].item_title }}</a>
+  </p>
+
+  {% if error %}
   <p>VIRHE: {{ error }}</p>
-{% endif %}
+  {% endif %}
 
-{% for message in messages %}
-  <hr>
+  {% for message in messages %}
+  <div style="border: 1px solid black; padding: 1em; margin-bottom: 1em;">
+
+    <p>
+      Lähettäjä:
+      <a href="/user/{{ message.sender_id }}">{{ message.sender_username }}</a>
+    </p>
+
+    <p>
+      Vastaanottaja:
+      <a href="/user/{{ message.receiver_id }}">{{ message.receiver_username }}</a>
+    </p>
+
+    <p>
+      Lähetetty: {{ message.created_at }}
+    </p>
+
+    <p>
+      {{ message.content }}
+    </p>
+
+  </div>
+  {% endfor %}
+
+  <h2>Vastaa</h2>
+
+  <form action="/messages/{{ messages[0].thread_id }}/reply" method="post">
+    <p>
+      <label for="content">Viesti:</label><br>
+      <textarea name="content" id="content" rows="6" cols="60"></textarea>
+    </p>
+
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+    <input type="submit" value="Lähetä vastaus">
+  </form>
 
   <p>
-    Lähettäjä:
-    <a href="/user/{{ message.sender_id }}">{{ message.sender_username }}</a>
+    <a href="/messages">Takaisin viesteihin</a>
   </p>
 
-  <p>
-    Vastaanottaja:
-    <a href="/user/{{ message.receiver_id }}">{{ message.receiver_username }}</a>
-  </p>
-
-  <p>
-    Lähetetty: {{ message.created_at }}
-  </p>
-
-  <p>
-    {{ message.content }}
-  </p>
-{% endfor %}
-
-<h2>Vastaa</h2>
-
-<form action="/messages/{{ messages[0].thread_id }}/reply" method="post">
-  <p>
-    <label for="content">Viesti:</label><br>
-    <textarea name="content" id="content" rows="6" cols="60"></textarea>
-  </p>
-
-  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-
-  <input type="submit" value="Lähetä vastaus">
-</form>
-
-<p>
-  <a href="/messages">Takaisin viesteihin</a>
-</p>
+</div>

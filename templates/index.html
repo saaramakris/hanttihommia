@@ -15,107 +15,117 @@
     {% endif %}
   </div>
 
-  <h1>Hanttihommia</h1>
+  <div style="text-align: center;">
 
-  {% if session.username %}
+    <h1>Hanttihommia</h1>
 
-  <p>
-    <a href="/new_item">Uusi ilmoitus</a>
-    <a href="/logout">Kirjaudu ulos</a>
-  </p>
+    {% if session.username %}
 
-  {% else %}
-
-  <p>
-    <a href="/login">Kirjaudu sisään</a>
-    <a href="/register">Luo tunnus</a>
-  </p>
-
-  {% endif %}
-
-  <h2>Hae ilmoituksia</h2>
-
-  <form action="/" method="get">
     <p>
-      Hakusana:
-      <input type="text" name="q" value="{{ query }}" />
-
-      Sijainti:
-      <input type="text" name="location" value="{{ location }}" />
-
-      Luokka:
-      <select name="category">
-        <option value="">Kaikki</option>
-        {% for option in categories %}
-        <option value="{{ option }}" {% if option == category %}selected{% endif %}>
-          {{ option }}
-        </option>
-        {% endfor %}
-      </select>
-
-      <input type="submit" value="Hae" />
+      <a href="/new_item">Uusi ilmoitus</a>
+      <a href="/logout">Kirjaudu ulos</a>
     </p>
-  </form>
 
-  {% if query or location or category %}
+    {% else %}
 
-  <p>
-    Hakutulokset
-    {% if query %}
-    hakusanalla "{{ query }}"
+    <p>
+      <a href="/login">Kirjaudu sisään</a>
+      <a href="/register">Luo tunnus</a>
+    </p>
+
     {% endif %}
-    {% if location %}
-    sijainnilla "{{ location }}"
+
+  </div>
+
+  <div style="max-width: 700px; margin: auto;">
+
+    <h2>Hae ilmoituksia</h2>
+
+    <form action="/" method="get">
+      <p>
+        Hakusana:
+        <input type="text" name="q" value="{{ query }}" />
+
+        Sijainti:
+        <input type="text" name="location" value="{{ location }}" />
+
+        Luokka:
+        <select name="category">
+          <option value="">Kaikki</option>
+          {% for option in categories %}
+          <option value="{{ option }}" {% if option == category %}selected{% endif %}>
+            {{ option }}
+          </option>
+          {% endfor %}
+        </select>
+
+        <input type="submit" value="Hae" />
+      </p>
+    </form>
+
+    {% if query or location or category %}
+
+    <p>
+      Hakutulokset
+      {% if query %}
+      hakusanalla "{{ query }}"
+      {% endif %}
+      {% if location %}
+      sijainnilla "{{ location }}"
+      {% endif %}
+      {% if category %}
+      luokassa "{{ category }}"
+      {% endif %}
+    </p>
+
     {% endif %}
-    {% if category %}
-    luokassa "{{ category }}"
+
+    <h2>Ilmoitukset</h2>
+
+    {% if items %}
+
+    {% for item in items %}
+
+    <div style="border: 1px solid black; padding: 1em; margin-bottom: 1em;">
+
+      <h3><a href="/item/{{ item.id }}">{{ item.title }}</a></h3>
+
+      <p>
+        Ilmoittaja: <a href="/user/{{ item.user_id }}">{{ item.username }}</a> <br />
+        Luokitus: {{ item.category }} <br />
+        Sijainti: {{ item.location if item.location else "-" }} <br />
+        Palkkio: {{ item.reward }} € <br />
+        Lisätty: {{ item.created_at }}
+      </p>
+
+      <p>
+        {{ item.description }}
+      </p>
+
+      {% if session.user_id and session.user_id == item.user_id %}
+
+      <p>
+        <a href="/edit_item/{{ item.id }}">Muokkaa</a>
+      </p>
+
+      <form action="/delete_item/{{ item.id }}" method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <input type="submit" value="Poista ilmoitus" />
+      </form>
+
+      {% endif %}
+
+    </div>
+
+    {% endfor %}
+
+    {% else %}
+
+    <p>Ilmoituksia ei löytynyt.</p>
+
     {% endif %}
-  </p>
 
-  {% endif %}
-
-  <h2>Ilmoitukset</h2>
-
-  {% if items %}
-
-  {% for item in items %}
-
-  <hr />
-
-  <h3><a href="/item/{{ item.id }}">{{ item.title }}</a></h3>
-
-  <p>
-    Ilmoittaja: <a href="/user/{{ item.user_id }}">{{ item.username }}</a> <br />
-    Luokitus: {{ item.category }} <br />
-    Sijainti: {{ item.location if item.location else "-" }} <br />
-    Palkkio: {{ item.reward }} € <br />
-    Lisätty: {{ item.created_at }}
-  </p>
-
-  <p>
-    {{ item.description }}
-  </p>
-
-  {% if session.user_id and session.user_id == item.user_id %}
-
-  <p>
-    <a href="/edit_item/{{ item.id }}">Muokkaa</a>
-  </p>
-
-  <form action="/delete_item/{{ item.id }}" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" value="Poista ilmoitus" />
-  </form>
-
-  {% endif %}
-
-  {% endfor %}
-
-  {% else %}
-
-  <p>Ilmoituksia ei löytynyt.</p>
-
-  {% endif %}
+  </div>
 
 </body>
 
