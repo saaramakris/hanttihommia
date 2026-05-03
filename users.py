@@ -32,6 +32,16 @@ def get_items(user_id):
     """
     return db.query(sql, [user_id])
 
+def count_items(user_id):
+ sql = """
+ SELECT COUNT(*) count
+ FROM items
+ WHERE user_id = ?
+ AND deleted = 0
+ """
+ result = db.query(sql, [user_id])
+ return result[0]["count"]
+
 def create_user(username, password):
     password_hash = generate_password_hash(password, method="pbkdf2:sha256")
 

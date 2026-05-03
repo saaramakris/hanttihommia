@@ -263,14 +263,12 @@ def send_message(item_id):
 
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
-    user = users.get_user(user_id)
-
-    if not user:
-        return "VIRHE: käyttäjää ei löytynyt"
-
-    user_items = users.get_items(user_id)
-
-    return render_template("user.html", user=user, items=user_items)
+ user = users.get_user(user_id)
+ if not user:
+  return "VIRHE: käyttäjää ei löytynyt"
+ user_items = users.get_items(user_id)
+ item_count = users.count_items(user_id)
+ return render_template("user.html", user=user, items=user_items, item_count=item_count)
 
 
 @app.route("/new_item")
