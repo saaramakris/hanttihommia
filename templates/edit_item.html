@@ -24,17 +24,17 @@
   <form action="/update_item/{{ item.id }}" method="post">
     <p>
       Otsikko: <br />
-      <input type="text" name="title" value="{{ item.title }}" />
+      <input type="text" name="title" value="{{ item.title }}" required />
     </p>
 
     <p>
       Kuvaus: <br />
-      <textarea name="description" rows="8" cols="50">{{ item.description }}</textarea>
+      <textarea name="description" rows="8" cols="50" required>{{ item.description }}</textarea>
     </p>
 
     <p>
       Luokitus: <br />
-      <select name="category">
+      <select name="category" required>
         {% for category in categories %}
         <option value="{{ category }}" {% if category == item.category %}selected{% endif %}>
           {{ category }}
@@ -50,7 +50,7 @@
 
     <p>
       Maksettava palkkio: <br />
-      <input type="text" name="reward" value="{{ item.reward }}" /> €
+      <input type="number" name="reward" value="{{ item.reward }}" required min="0" step="1" /> €
     </p>
 
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />

@@ -7,7 +7,6 @@
 </head>
 
 <body>
-
   <h1>Luo tunnus</h1>
 
   {% if error %}
@@ -17,12 +16,12 @@
   <form action="/create" method="post">
     <p>
       Tunnus: <br />
-      <input type="text" name="username" value="{{ username or '' }}" />
+      <input type="text" name="username" value="{{ username or '' }}" required />
     </p>
 
     <p>
       Salasana: <br />
-      <input type="password" name="password1" />
+      <input type="password" name="password1" required minlength="4" />
     </p>
 
     <p>
@@ -31,7 +30,7 @@
 
     <p>
       Salasana uudestaan: <br />
-      <input type="password" name="password2" />
+      <input type="password" name="password2" required minlength="4" />
     </p>
 
     <input type="submit" value="Luo tunnus" />
@@ -40,7 +39,6 @@
   <p>
     <a href="/login">Kirjaudu sisään</a>
   </p>
-
 </body>
 
 </html>
